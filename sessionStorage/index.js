@@ -5,10 +5,13 @@
 
 // Function to show the popup after the specified delay
 function showPopupWithDelay(popupElement, delay) {
-    setTimeout(function() {
-        popupElement.style.display = "flex"; // Change "block" to "flex"
-        sessionStorage.setItem('popup-opened', 1);
-    }, delay * 1000);
+    
+        setTimeout(function() {
+            if (sessionStorage.getItem("popup-opened") != '1'){
+                popupElement.style.display = "flex"; // Change "block" to "flex"
+                sessionStorage.setItem('popup-opened', 1);
+            }
+        }, delay * 1000);
 }
 
 // Function to show the popup on exit intent (if fitr-popr-exit-intent attribute is present)
@@ -17,15 +20,18 @@ function showPopupOnExitIntent(popupElement) {
 
     if (exitIntentAttr !== null) {
         document.addEventListener('mousemove', function(event) {
-            var mouseX = event.clientX;
-            var mouseY = event.clientY;
-            var threshold = 100; // Increase the threshold value to 100 pixels
+            if (sessionStorage.getItem("popup-opened") != '1'){
+                var mouseX = event.clientX;
+                var mouseY = event.clientY;
+                var threshold = 100; // Increase the threshold value to 100 pixels
 
-            if (mouseX <= threshold && mouseY <= threshold) {
-                popupElement.style.display = "flex"; // Change "block" to "flex"
-                sessionStorage.setItem('popup-opened', 1);
-                document.removeEventListener('mousemove', this);
+                if (mouseX <= threshold && mouseY <= threshold) {
+                    popupElement.style.display = "flex"; // Change "block" to "flex"
+                    sessionStorage.setItem('popup-opened', 1);
+                    document.removeEventListener('mousemove', this);
+                }
             }
+            
         });
     }
 }
@@ -33,15 +39,18 @@ function showPopupOnExitIntent(popupElement) {
 // Function to show the popup on scroll trigger (if fitr-popr-scroll-trigger attribute is present)
 function showPopupOnScrollTrigger(popupElement, triggerPercentage) {
     var scrollTriggerOffset = (triggerPercentage / 100) * (document.documentElement.scrollHeight - window.innerHeight);
-
-    window.addEventListener('scroll', function() {
-        var scrollPosition = window.scrollY || window.pageYOffset;
-        if (scrollPosition >= scrollTriggerOffset) {
-            popupElement.style.display = "flex"; // Change "block" to "flex"
-            sessionStorage.setItem('popup-opened', 1);
-            window.removeEventListener('scroll', this);
-        }
-    });
+    
+        window.addEventListener('scroll', function() {
+            if (sessionStorage.getItem("popup-opened") != '1'){
+                var scrollPosition = window.scrollY || window.pageYOffset;
+                if (scrollPosition >= scrollTriggerOffset) {
+                    popupElement.style.display = "flex"; // Change "block" to "flex"
+                    sessionStorage.setItem('popup-opened', 1);
+                    window.removeEventListener('scroll', this);
+                }
+            }
+        });
+    
 }
 
 // Function to find and initialize the popups
@@ -53,13 +62,13 @@ function initializePopups() {
             popup.style.display = 'none';
 
             // Get Last Closed Time (milliseconds)
-            const lastClosedAt = parseFloat(localStorage.getItem("fitr-popr-closed-at"));
+            const lastClosedAt = parseFloat(localStorage.getItem("fitr-popr-closed-at")) || 0;
 
             // Determine to show or hide popup (hours)
-            const hideDuration = parseFloat(localStorage.getItem("fitr-popr-cookie-duration"));
+            const hideDuration = parseFloat(localStorage.getItem("fitr-popr-cookie-duration")) || 0;
 
             // Show/Hide popup in same session (if applicable)
-            if (popup.getAttribute('fitr-popr-same-session') !== 'true' && sessionStorage.getItem("popup-opened") == '1') {
+            if (isNaN(popup.getAttribute('fitr-popr-same-session'))  && sessionStorage.getItem("popup-opened") == '1') {
                 console.log(popup.getAttribute('fitr-popr-same-session'))
                 lastClosedAt == 0;
                 hideDuration == 0;
@@ -114,4 +123,5 @@ function initializePopups() {
 }
 
 // Call the initializePopups function after the DOM has loaded
+sessionStorage.setItem('popup-opened', 0);
 document.addEventListener('DOMContentLoaded', initializePopups);

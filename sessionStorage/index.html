@@ -1,0 +1,43 @@
+<head>
+<script src="./index.js"></script>
+</head>
+<body>
+    <div class="dialog-type-lightbox">
+        <div class="popup" fitr-popr-popup="true" fitr-popr-delay="5" fitr-popr-scroll-trigger="30" fitr-popr-exit-intent="" fitr-popr-same-session="true" fitr-popr-cookie-duration="0.001">
+            <a role="button" fitr-popr-close class="fitr-popr-close"><span class="eicon-close">X</span></a>
+        </div>
+    </div>
+    
+
+</body>
+
+<style>
+    body{
+        height: 2000px;
+    }
+    .dialog-type-lightbox{
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0,0,0,.8);
+        display: flex;
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+    }
+    .popup{
+        width: 500px;
+        height: 400px;
+        background:#ffccaa;
+        position: absolute;
+    }
+    .eicon-close {
+        display: flex;
+        top: 20px;
+        right: 20px;
+        position: absolute;
+        cursor: pointer;
+    }
+
+</style>
